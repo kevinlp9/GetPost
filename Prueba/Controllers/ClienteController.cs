@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Prueba.Models;
 
 namespace Prueba.Controllers
 {
@@ -6,18 +7,24 @@ namespace Prueba.Controllers
     [Route("cliente")]
     public class ClienteController : ControllerBase
     {
-        [HttpGet(Name ="GetCliente")]
-        public IActionResult GetClientes()
+        private readonly Context _context;
+        public ClienteController(Context context)
         {
-            // Aquí puedes implementar la lógica para obtener los clientes
-            return Ok(new { Message = "Lista de clientes" });
+            _context = context;
+        }
+        [HttpGet(Name ="GetBooks")]
+        public IActionResult GetBooks()
+        {
+            var books = _context.Books.ToList();
+            return Ok(books);
         }
 
-        [HttpPost(Name = "PostCliente")]
-        public IActionResult PostClientes()
+        [HttpPost(Name = "PostBooks")]
+        public IActionResult PostBoooks([FromBody] Book book)
         {
-            // Aquí puedes implementar la lógica para obtener los clientes
-            return Ok(new { Message = "Lista de clientes" });
+            _context.Books.Add(book);
+            _context.SaveChanges();
+            return CreatedAtAction(nameof(GetBooks), new { id = book.Id }, book);
         }
     }
 }
